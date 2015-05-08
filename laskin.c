@@ -58,6 +58,25 @@ char Is_Operator(char *mjono, char *oper)
 	return 1;
 }
 
+char Is_Operator2(char *mjono, char *oper)
+{
+	switch((char)mjono[0]){
+		case '+': *oper = '+';
+				break;
+		case '-': *oper = '-';
+				break;
+		case 'x': 				
+		case '*': *oper = 'x';
+				break;
+		case '/': *oper = '/';
+				break;
+		default:
+			*oper = 0;
+			return 0;
+	}
+	return 1;
+}
+
 
 #define MAX_PARAM 10
 double Numbers[MAX_PARAM+1];
@@ -85,26 +104,64 @@ double calculate(double luku1, double luku2, char oper){
 	}
 	return 0;
 }
+
+double calculate2(double luku1, double luku2, char oper){
+
+	switch(oper)
+	{
+		case '+': return luku1 + luku2;
+		case '-': return luku1 - luku2;
+		case 'x': return luku1 * luku2;
+		case '/': return luku1 / luku2;
+		default:
+			printf("!! ERROR in count !!!!\n");
+	}
+	return 0;
+}
+
+
 void print_status(char count)
 {
 	unsigned char i;
 	printf(" O: ");
 	for(i=0;i<(count+1);i++){
-		printf(" %4d", Operators[i] );
+		printf(" %5d", Operators[i] );
 	}
 	printf("\n P: ");
 	for(i=0;i<(count+1);i++){
-	printf(" %4f", Numbers[i] );
+	printf(" %1.2f", Numbers[i] );
 	}
 	printf("\n");
 }
 
+void print_status2(char count)
+{
+	unsigned char i;
+	printf(" O: ");
+	for(i=0;i<(count+1);i++){
+		printf(" %5c", Operators[i] );
+	}
+	printf("\n P: ");
+	for(i=0;i<(count+1);i++){
+	printf(" %1.2f", Numbers[i] );
+	}
+	printf("\n");
+}
+
+char CheckCountOrder(char op1, char op2){
+
+	if(((op2 == 'x') ||(op2 == '/' )) && ( (op1 == '+') ||(op1 == '-' ))){
+		return 1;
+	}
+	return 0;
+}
 
 int main(int argc, char *argv[]) {
 
 	int param;
-	char oper, o_count, p_count;
+	char oper;
 	unsigned int i;	
+	unsigned char o_count, p_count;
 	
 	if(argc == 1)
 	{
@@ -122,9 +179,9 @@ int main(int argc, char *argv[]) {
 
 	/* Should be number */
 		if(i & 1){
-			printf(" N: %s -> ", argv[i]);
+		//	printf(" N: %s -> ", argv[i]);
 			if(Is_Number(argv[i], &param)){
-				printf(" Luku: %d \n", param);
+			//	printf(" Luku: %d \n", param);
 				Numbers[p_count++] = param;
 			 } else {
 			 	printf(" ERROR: %s not number\n", argv[i]);
@@ -133,9 +190,9 @@ int main(int argc, char *argv[]) {
 		}
 		/* Should be operator */
 		else {
-			printf(" O: %s -> ", argv[i]);
-			if(Is_Operator(argv[i], &oper)){
-			printf(" Operator: %d \n", oper);
+	//		printf(" O: %s -> ", argv[i]);
+			if(Is_Operator2(argv[i], &oper)){
+		//	printf(" Operator: %d \n", oper);
 			Operators[o_count++] = oper;
 			}else {
 			 	printf(" ERROR: %s not Operator\n", argv[i]);
@@ -144,7 +201,7 @@ int main(int argc, char *argv[]) {
 		}		
 	} /* for() */
 	
-	printf(" o count %d <-> %d p count\n", o_count, p_count);
+//	printf(" o count %d <-> %d p count\n", o_count, p_count);
 	if((o_count + 1) != p_count)
 	{
 		printf(" Error in formula \n");
@@ -153,26 +210,38 @@ int main(int argc, char *argv[]) {
 
 //	double tulos = 0;
 //	double tmp_tulos = 0;
-	print_status(o_count);
+// HH	print_status2(o_count);
+	/* Print calculus */
+	printf(" %d",(int)Numbers[0]);
+	for(i=0;i<o_count;i++)
+	{
+		printf(" %c",Operators[i]);
+		printf(" %d",(int)Numbers[i+1]);
+	}
+	printf(" =");
+	
 	/* Actual calculation */
 	do{
 		/* Next operand have higer priority */
-		if((Operators[0] < 0) && (Operators[1]>0))
+//		if((Operators[0] < 0) && (Operators[1]>0))
+		if(CheckCountOrder(Operators[0], Operators[1]))
 		{
-			Numbers[1] = calculate(Numbers[1], \
+			Numbers[1] = calculate2(Numbers[1], \
 				Numbers[2], Operators[1]);
 			Remove_index(1);
 		}
 		/* Current can calculate */
 		else{
-			Numbers[0] = calculate(Numbers[0], \
+			Numbers[0] = calculate2(Numbers[0], \
 				Numbers[1], Operators[0]);
 			Remove_index(0);
 		}
 
 		o_count--;
-		print_status(o_count);
+	// HH	print_status2(o_count);
 	}while(o_count);
+	printf(" %.2f\n", Numbers[0]);
+	
 	
 	return 0;
 }
