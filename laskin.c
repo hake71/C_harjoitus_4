@@ -58,8 +58,22 @@ char Is_Operator(char *mjono, char *oper)
 	return 1;
 }
 
-char Is_Operator2(char *mjono, char *oper)
+char Is_Operator2(char *mjono)
 {
+#if 1
+	switch((char)mjono[0]){
+		case '+':
+		case '-':
+		case 'x': 				
+		case '*':
+		case '/':
+			return 1;
+			
+		default:
+			return 0;
+	}
+
+#else
 	switch((char)mjono[0]){
 		case '+': *oper = '+';
 				break;
@@ -74,6 +88,7 @@ char Is_Operator2(char *mjono, char *oper)
 			*oper = 0;
 			return 0;
 	}
+#endif
 	return 1;
 }
 
@@ -191,9 +206,9 @@ int main(int argc, char *argv[]) {
 		/* Should be operator */
 		else {
 	//		printf(" O: %s -> ", argv[i]);
-			if(Is_Operator2(argv[i], &oper)){
+			if(Is_Operator2(argv[i])){
 		//	printf(" Operator: %d \n", oper);
-			Operators[o_count++] = oper;
+			Operators[o_count++] = (char)argv[i][0];
 			}else {
 			 	printf(" ERROR: %s not Operator\n", argv[i]);
 			 	return 1;
