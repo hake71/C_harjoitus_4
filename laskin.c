@@ -140,7 +140,7 @@ int main(int argc, char *argv[]) {
 	/* Check parameters */
 	for(i = 1; i < argc; i++){
 		/* Should be number */
-		if(i & 1){
+		if(i % 2){
 			/* Check if parameter is number ... */
 			if(Is_Number(argv[i], &param)){
 				/* ... parameter is number */
